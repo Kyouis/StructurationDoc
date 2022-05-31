@@ -14,17 +14,17 @@ import java.nio.charset.StandardCharsets;
  */
 public class HTTPTools {
     // temps minimum d'une requête HTTP en ms (4 seconds)
-    private int mt = 4000;
+    private static int mt = 4000;
 
     // dernière requête HTTP
-    private long last;
+    private static long last;
 
     /**
      * Envoi une requête GET
      * @param url de la requête
      * @return reponse
      */
-    public String sendGet(String url) {
+    public static String sendGet(String url) {
         // vérifie le temps écoulé depuis la requête précédente
         while (System.currentTimeMillis() - last < mt);
         last = System.currentTimeMillis();
