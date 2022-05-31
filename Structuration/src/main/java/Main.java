@@ -19,7 +19,7 @@ public class Main {
         switch (choix) {
             case "1" -> Connection.getTopArtists();//System.out.println(Connection.getTopArtists());
             case "2" -> System.out.println(Connection.getTopTags());
-            case "3" -> System.out.println(Connection.getTopTracks());
+            case "3" -> Connection.getTopTracks();
             default -> System.out.println("Entrez un choix valide");
         }
 

@@ -8,18 +8,20 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.json.simple.parser.ParseException;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 
 
 public class Connection {
 
+    static MongoCollection<Document> tracks;
     static MongoCollection<Document> artists;
     public static void connect() {
         String uri = "mongodb://localhost:27017";
         MongoClient mongoClient = MongoClients.create(uri);
         MongoDatabase database = mongoClient.getDatabase("SD2022_projet");
         artists  = database.getCollection("artists", Document.class);
-
+        tracks = database.getCollection("tracks", Document.class);
     }
 
     public static String getAPiKey() {
@@ -43,7 +45,16 @@ public class Connection {
         return HTTPTools.sendGet("http://ws.audioscrobbler.com/2.0/?method=chart.gettoptags&api_key="+Connection.getAPiKey()+"&format=json&limit=10");
     }
 
-    public static String getTopTracks() {
-        return HTTPTools.sendGet("http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key="+Connection.getAPiKey()+"&format=json&limit=10");
+    public static void getTopTracks() {
+        String res = HTTPTools.sendGet("http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key="+Connection.getAPiKey()+"&format=json&limit=10");
+        Document parseRes = Document.parse(res);
+        Document res2 = (Document) parseRes.get("tracks");
+        ArrayList<Document> res3 = (ArrayList<Document>) res2.get("track");
+        for (Document o : res3) {
+            String name = (String) o.get("name");
+            String listeners = (String) o.get("listeners");
+            String playcount = (String) o.get("playcount");
+            tracks.insertOne(new Document("name", name).append("listeners", listeners).append("playcount", playcount));
+        }
     }
 }
